@@ -33,9 +33,9 @@ class Selenium:
         try:
             self._init_driver()
             self.driver.get(url)
-            time.sleep(2)
+            time.sleep(3)
             self.driver.execute_script('window.scrollTo(5, 4000);')
-            time.sleep(2)
+            time.sleep(1)
             return BeautifulSoup(self.driver.page_source, features='html.parser')
         except Exception as ex:
             print(ex)
@@ -76,10 +76,9 @@ class Selenium:
                 if link not in product_list:
                     product_list.append(link)
             """ Вывод в консоль """
-            for item in tqdm(product_list, ncols=80, desc='Total'):
-                name, price, characteristics = self._parse_product(item)
-                print(f'\nНазвание: {name}\nЦена:{price}\nХарактериски:{characteristics}\n')
-
-
-if __name__ == '__main__':
-    Selenium().parse('https://www.ozon.ru/category/korpusa-dlya-kompyuterov-15734/?category_was_predicted=true&deny_category_prediction=true&from_global=true&text=%D0%BA%D0%BE%D1%80%D0%BF%D1%83%D1%81%D0%B0+%D0%B4%D0%BB%D1%8F+%D0%BF%D0%BA')
+            with tqdm(total=len(product_list), desc='Total') as bar:
+                for item in product_list:
+                    name, price, characteristics = self._parse_product(item)
+                    print(f'\nНазвание: {name}\nЦена:{price}\nХарактериски:{characteristics}')
+                    bar.update(1)
+                bar.close()
